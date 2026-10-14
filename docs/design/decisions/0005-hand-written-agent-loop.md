@@ -17,4 +17,4 @@ An agent loop is about 80 lines: call the model, run the tools it asks for, send
 
 ## Why
 
-*Lalit writes this section, in plain words, as part of ticket 7. Answer: what did writing the loop yourself show you that a framework would have hidden?*
+*Lalit writes this section, in plain words, as part of #8. Answer: what did writing the loop yourself show you that a framework would have hidden?*

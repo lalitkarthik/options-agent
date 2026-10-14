@@ -43,7 +43,7 @@ its tickets are sub-issues labelled `ticket` with native blocked-by edges. See
 
 ### Commands
 
-These become real once ticket 1 (repo skeleton) lands.
+These become real once #2 (repo skeleton) lands.
 
 | Step | Command |
 | --- | --- |

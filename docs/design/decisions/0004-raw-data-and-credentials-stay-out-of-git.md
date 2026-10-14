@@ -17,4 +17,4 @@ The Databento licence does not allow redistributing raw data, and the repo will 
 
 ## Why
 
-*Lalit writes this section, in plain words, as part of ticket 2. Answer: what exactly may and may not be published from this repo, and why?*
+*Lalit writes this section, in plain words, as part of #3. Answer: what exactly may and may not be published from this repo, and why?*

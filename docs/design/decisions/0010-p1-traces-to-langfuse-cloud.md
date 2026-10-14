@@ -17,4 +17,4 @@ When the agent gets a question wrong, its full recording (tool calls, inputs, ou
 
 ## Why
 
-*Lalit writes this section, in plain words, as part of ticket 10. Answer: what would you look for in a trace when an exam question fails?*
+*Lalit writes this section, in plain words, as part of #11. Answer: what would you look for in a trace when an exam question fails?*

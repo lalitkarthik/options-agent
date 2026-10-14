@@ -19,4 +19,4 @@ The agent answers questions about forwards, implied volatility, greeks, skew, re
 
 ## Why
 
-*Lalit writes this section, in plain words, as part of the spec issue, before ticket 3. Answer: why is an unchanged engine worth more here than a cleaner rewrite of your own?*
+*Lalit writes this section, in plain words, as part of the spec issue, before #4. Answer: why is an unchanged engine worth more here than a cleaner rewrite of your own?*

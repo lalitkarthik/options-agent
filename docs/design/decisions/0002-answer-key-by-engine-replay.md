@@ -18,4 +18,4 @@ Calling the engine's calculation functions from our own script would still leave
 
 ## Why
 
-*Lalit writes this section, in plain words, as part of the spec issue, before ticket 3. Answer: what could go wrong if the answer key came from your own script instead of the engine's replay?*
+*Lalit writes this section, in plain words, as part of the spec issue, before #4. Answer: what could go wrong if the answer key came from your own script instead of the engine's replay?*

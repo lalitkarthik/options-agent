@@ -18,4 +18,4 @@ An exam needs answers that never change. Live data changes every second, and a q
 
 ## Why
 
-*Lalit writes this section, in plain words, as part of the spec issue, before ticket 3. Answer: why 15:45 rather than the open or the close?*
+*Lalit writes this section, in plain words, as part of the spec issue, before #4. Answer: why 15:45 rather than the open or the close?*

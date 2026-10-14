@@ -17,4 +17,4 @@ Plain right/wrong marking rewards guessing, and models' self-reported confidence
 
 ## Why
 
-*Lalit writes this section, in plain words, as part of ticket 6. Answer: why -3 for a wrong answer in a finance setting, and what would -1 change?*
+*Lalit writes this section, in plain words, as part of #7. Answer: why -3 for a wrong answer in a finance setting, and what would -1 change?*

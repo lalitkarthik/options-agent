@@ -18,4 +18,4 @@ Good harnesses (Inspect's react agent, SWE-agent) end on an explicit submit tool
 
 ## Why
 
-*Lalit writes this section, in plain words, as part of ticket 8. Answer: why is a checked tool call better than asking for JSON at the end?*
+*Lalit writes this section, in plain words, as part of #9. Answer: why is a checked tool call better than asking for JSON at the end?*

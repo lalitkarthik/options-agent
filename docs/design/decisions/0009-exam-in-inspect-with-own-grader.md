@@ -16,4 +16,4 @@ Inspect already runs tasks, repeats trials, reduces them to pass^k and records e
 
 ## Why
 
-*Lalit writes this section, in plain words, as part of ticket 6. Answer: what does the runner give you for free, and what must stay yours?*
+*Lalit writes this section, in plain words, as part of #7. Answer: what does the runner give you for free, and what must stay yours?*

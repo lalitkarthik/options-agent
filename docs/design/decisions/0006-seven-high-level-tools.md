@@ -12,9 +12,9 @@ The agent could be given many small tools (raw quotes, a forward fit, an IV solv
 
 ## Consequences
 
-- Tool descriptions are prompt engineering and are written by Lalit (ticket 4).
+- Tool descriptions are prompt engineering and are written by Lalit (#5).
 - Comparisons such as the implied-realised gap come from tools, not from the agent's arithmetic.
 
 ## Why
 
-*Lalit writes this section, in plain words, as part of ticket 4. Answer: why should the agent get finished figures instead of building blocks?*
+*Lalit writes this section, in plain words, as part of #5. Answer: why should the agent get finished figures instead of building blocks?*
