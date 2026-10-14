@@ -1,0 +1,22 @@
+# Raw market data never enters git (Databento licence; see docs/roadmap.md)
+data/
+snapshots/
+*.dbn
+*.dbn.zst
+*.parquet
+
+# Credentials
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+.next/
