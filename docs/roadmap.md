@@ -64,9 +64,14 @@ Every ticket carries one label, suggested when tickets are written and Lalit's t
 
 - **`learn`**: the first time a concept appears (first MCP tool, first queue consumer, first
   Terraform module, first reconnect loop). Lalit writes it. Claude does not write its code.
-- **`glue`**: repeats and plumbing (CRUD routes, UI, config). Built by feature-loop and
-  auto-merged; Lalit skims the PR afterwards. The feature-loop orchestrator skips `learn`
-  tickets.
+- **`glue`**: repeats and plumbing (CRUD routes, UI, config). In P1 Claude builds each one as a
+  PR into `main` with a walkthrough (what, file by file; why; concepts with resources; a ChatGPT
+  prompt); Lalit skims and merges. From P2, feature-loop's orchestrator builds them; it skips
+  `learn` tickets.
+
+**Doubts go to ChatGPT.** Lalit's ChatGPT Go project is connected to this repo. Every walkthrough
+and every `learn` ticket start comes with a ready-to-paste prompt naming the files, issue and docs
+to read, so back-and-forth questions happen there and Claude usage goes to building and review.
 
 A `learn` ticket goes:
 
