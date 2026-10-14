@@ -8,8 +8,11 @@ here matters more than speed. Read [docs/roadmap.md](docs/roadmap.md) before any
 - **`learn` tickets are Lalit's to write.** Do not write their implementation code, even when
   asked casually mid-session; explain, point at the concept, review. Tests and code for `glue`
   tickets are fine, and feature-loop builds those.
-- **Resources when a concept comes up:** one video, one article, the official docs, put in the
-  ticket issue under "Concepts". Not `/study` sessions, not separate notes.
+- **Teach when a concept comes up:** explain it in chat, then list every genuinely good video,
+  article and official doc (ranked, "start here" first; not a fixed one of each) in the ticket
+  issue under "Concepts". Not `/study` sessions, not separate notes.
+- **Each phase starts with research** (`docs/research/<phase>-references.md`): how well-built
+  projects did each part, before the design is fixed.
 - **Reviews explain, they do not fix.** Name the problem, the concept behind it and where to read
   more. Write the fix only if Lalit asks for it twice.
 - **ADRs:** draft the context and options; leave the "why" paragraph for Lalit to write.

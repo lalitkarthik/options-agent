@@ -46,6 +46,20 @@ questioning. Not perfect. A polished repo nobody can explain (PaperLens) is the 
 
 ## How every ticket is worked
 
+### At the start of each phase
+
+1. **Research** how strong teams built each part of the phase (mattpocock `research`, primary
+   sources: code, specs, papers, official docs). Output: `docs/research/<phase>-references.md`,
+   with, per part, 2-3 well-built reference projects, how each does it, what we take and what we
+   deliberately do not. This is how the Convex Hedge engine got its bus (NautilusTrader) and its
+   event-driven design (Netflix): copy proven designs on purpose, and say so.
+2. **Design grilling**, informed by the research.
+3. **Write the phase docs**: `CONTEXT.md` (the vocabulary), `docs/design/<phase>.md` (problem,
+   solution, decisions), one ADR per decision citing the reference it took from.
+4. **Tickets** as GitHub issues, each with a "Concepts" section.
+
+### Each ticket
+
 Every ticket carries one label, suggested when tickets are written and Lalit's to flip:
 
 - **`learn`**: the first time a concept appears (first MCP tool, first queue consumer, first
@@ -58,8 +72,10 @@ A `learn` ticket goes:
 
 1. **Grill** the design briefly. Each decision becomes an ADR in `docs/design/decisions/`;
    Claude drafts the context, Lalit writes the "why" paragraph in plain words.
-2. **Resources** go in the ticket issue under a "Concepts" heading: one video, one article, the
-   official docs. Then doubts, back and forth. No separate notes system.
+2. **Teach**: Claude explains the concept in chat (with a diagram where it helps) and lists the
+   resources in the ticket issue under a "Concepts" heading: every genuinely good video, article
+   and official doc, ranked "start here" first, not a fixed one of each. Then doubts, back and
+   forth. No separate notes system.
 3. **Build test-first** (mattpocock `tdd`): write a failing test for the behaviour, make it
    pass, clean up.
 4. **Review**: open a PR, run `/code-review high --comment` (inline comments) and mattpocock
@@ -79,6 +95,9 @@ A `learn` ticket goes:
 | Observability | OpenTelemetry + Langfuse from P1; Grafana stack in P4 |
 | Cloud | AWS ($159 credits, expiry still to check before P4) |
 | Data | Databento for US options (P1); Upstox for NIFTY and SENSEX (P3) |
+| Calculations | The Convex Hedge Trading Engine's own code and formulas, unchanged (permission given by the firm). Nothing is re-derived |
+| Answer key | Replay the real engine over the downloaded files and record what it publishes at 15:45; RV from the engine's `realised.py` on index candles. Our own code never re-implements its quote handling |
+| Snapshot time | 15:45 New York time |
 | Docs | `CONTEXT.md`, `docs/design/`, ADRs in `docs/design/decisions/`, same format as delta-exchange-payoff and statement-extractor |
 | Visibility | Private until P1 has real eval numbers, then public |
 
@@ -87,14 +106,22 @@ A `learn` ticket goes:
 - **Raw Databento data never enters git.** Its licence does not allow redistribution and the
   repo will go public. The repo carries a fetch script and checksums; anyone replaying the eval
   uses their own key. Only derived results are published.
+- **Data on disk** (`data/raw/`, ignored by git, checksums in `manifest.json`): six SPXW days
+  pulled 2026-10-14 from `OPRA.PILLAR`, each with the day's `definition` and `statistics` (open
+  interest) and `cbbo-1s` quotes for 15:30-15:46 ET, all expiries; 1.3 GB in all. The days:
+  2026-06-02 (calmest of the year), 2025-11-20 (most volatile), 2026-03-18 (FOMC), 2026-03-20
+  (quarterly expiry), 2025-11-26 (before Thanksgiving), 2026-05-04 (median day). The year of
+  0DTE-only data with index candles is at
+  `D:\Convex Hedge\Backtest-Engine-data-spike\Data` (no open interest, timestamps shifted 5h30).
 - **Credentials** (Databento key, Upstox token, model API keys) live in environment variables,
   never in files that are committed. The Upstox token expires daily.
 
 ## Budgets
 
-- **Model APIs:** up to $100 a month (the Anthropic key, renewed monthly). Develop on a cheap
-  model; full eval runs on Sonnet at milestones only, with prompt caching on. A full run is
-  about 30 tasks x 5 trials x ~20k tokens, roughly $10-15.
+- **Model APIs:** up to $100 a month (the Anthropic key, renewed monthly; Claude Max covers
+  Claude Code itself, not the app). The agent runs on Sonnet 5.5 ($2 / $10 per million tokens
+  in / out), about $0.06 per answer and $8-9 per full exam of 30 questions x 5 trials, with
+  prompt caching on. Opus 5.5 and Haiku 5.5 later as comparison runs.
 - **AWS:** budget alarms at $25, $75 and $125, set before anything is provisioned. Bring infra
   up per working session and `terraform destroy` after. Known traps: a NAT gateway is about $32
   a month, the EKS control plane about $73 a month, and new accounts have zero GPU quota until a
