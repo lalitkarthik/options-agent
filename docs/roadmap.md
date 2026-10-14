@@ -36,7 +36,7 @@ questioning. Not perfect. A polished repo nobody can explain (PaperLens) is the 
 
 | Phase | Weeks | What gets built | Concepts learned | Assignment it covers |
 |---|---|---|---|---|
-| P1 Agent core | 1-3 | Options MCP server over frozen Databento snapshots; a hand-written agent loop (no framework); structured output and guardrails; eval harness v1 with ~10 then ~30 tasks; OpenTelemetry traces into self-hosted Langfuse | Tool calling, MCP (stdio, then streamable HTTP), JSON schemas, context engineering, eval design (pass^k, tolerance graders, LLM judge), prompt caching, tracing | Resume Assistant (structured output, "not available", tool vs LLM), Agent |
+| P1 Agent core | 1-3 | Options MCP server over frozen Databento snapshots; a hand-written agent loop (no framework); structured output and guardrails; eval harness v1 with ~10 then ~30 tasks; OpenTelemetry traces into Langfuse Cloud (free tier; self-hosting moves to P4) | Tool calling, MCP (stdio, then streamable HTTP), JSON schemas, context engineering, eval design (pass^k, tolerance graders, LLM judge), prompt caching, tracing | Resume Assistant (structured output, "not available", tool vs LLM), Agent |
 | Agent Console | 4-5 | Separate repo, see above | WebSockets, heartbeats, sequence numbers, reorder buffer, dedupe, idempotency, reconnect with backoff and jitter, resume and replay, at-least-once delivery, TypeScript, React rendering | Full-stack AI (June 2026) |
 | P2 Backend | 6-8 | FastAPI service, Postgres, auth, a job API. Jobs first on an in-process queue (feel what a restart loses), then RabbitMQ workers. Agent events into Redis Streams with sequence numbers, so a client reconnecting to any API replica resumes from its last seq. Streaming answers the user can interrupt. Docker Compose, CI | REST design, schema, indexes, transactions, migrations; work queue vs event log; acks, prefetch, retries, dead-letter queues, back-pressure, idempotency keys; rate limiting, caching, connection pools | Platform (queues, long-running jobs), B2B custom agent (streaming, interruption, idle detection) |
 | P3 Reliability | 9-10 | Single agent vs multi-agent; the orchestrator rebuilt in LangGraph as one comparison variant (success, cost, lines of code); deeper guardrails; Upstox as a second data adapter; load tests; cost per task | Prompt injection through tool output, adapter pattern, daily token expiry, concurrency limits, Locust or k6, latency percentiles, cost modelling | Platform (concurrency, cost), Agent and Solutions (MCP server) |
@@ -92,7 +92,7 @@ A `learn` ticket goes:
 | Agent framework | Hand-written loop in P1. LangGraph only as a P3 comparison variant |
 | Queue | In-process first, then RabbitMQ as the work queue |
 | Event log | Redis Streams, for replayable agent output |
-| Observability | OpenTelemetry + Langfuse from P1; Grafana stack in P4 |
+| Observability | OpenTelemetry + Langfuse Cloud from P1; self-hosted Langfuse and the Grafana stack in P4 |
 | Cloud | AWS ($159 credits, expiry still to check before P4) |
 | Data | Databento for US options (P1); Upstox for NIFTY and SENSEX (P3) |
 | Calculations | The Convex Hedge Trading Engine's own code and formulas, unchanged (permission given by the firm). Nothing is re-derived |
