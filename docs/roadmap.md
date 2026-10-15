@@ -111,7 +111,9 @@ A `learn` ticket goes:
 - **Raw Databento data never enters git.** Its licence does not allow redistribution and the
   repo will go public. The repo carries a fetch script and checksums; anyone replaying the eval
   uses their own key. Only derived results are published.
-- **Data on disk** (`data/raw/`, ignored by git, checksums in `manifest.json`): six SPXW days
+- **Data on disk** (`data/raw/`, ignored by git; `uv run fetch-data` downloads what is missing and
+  `uv run fetch-data --verify` checks it against `data/manifest.json`, which is committed and
+  holds a checksum of each file's records, not of the whole file): six SPXW days
   pulled 2026-10-14 from `OPRA.PILLAR`, each with the day's `definition` and `statistics` (open
   interest) and `cbbo-1s` quotes for 15:30-15:46 ET, all expiries; 1.3 GB in all. The days:
   2026-06-02 (calmest of the year), 2025-11-20 (most volatile), 2026-03-18 (FOMC), 2026-03-20

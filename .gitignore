@@ -1,5 +1,7 @@
 # Raw market data never enters git (Databento licence; see docs/roadmap.md)
-data/
+data/*
+# ...except the checksum manifest, which is ours and is not data
+!data/manifest.json
 snapshots/
 *.dbn
 *.dbn.zst

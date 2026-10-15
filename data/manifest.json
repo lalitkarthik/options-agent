@@ -1,0 +1,97 @@
+{
+  "dataset": "OPRA.PILLAR",
+  "symbols": "SPXW.OPT (parent)",
+  "window_et": "15:30-15:46",
+  "files": {
+    "spxw-2026-06-02.definition.dbn.zst": {
+      "start": "2026-06-02",
+      "end": "2026-06-03",
+      "records_sha256": "0fb60292515f626a8fcaebf94a5f7a75f0da2f60e4a3bc8db3e8e775dfb30c5e"
+    },
+    "spxw-2026-06-02.statistics.dbn.zst": {
+      "start": "2026-06-02",
+      "end": "2026-06-03",
+      "records_sha256": "090a62dfc044f43992bdceb11c476bd4544c1f35d33e46041e4ba9cb1fbf4259"
+    },
+    "spxw-2026-06-02.cbbo-1s.dbn.zst": {
+      "start": "2026-06-02T15:30:00-04:00",
+      "end": "2026-06-02T15:46:00-04:00",
+      "records_sha256": "76a996931efa3972a63039fc9036737af73e898168ed958e0ce757c3c58e59f3"
+    },
+    "spxw-2025-11-20.definition.dbn.zst": {
+      "start": "2025-11-20",
+      "end": "2025-11-21",
+      "records_sha256": "1ffe28e57b440b7bc7c91bcc7c65a7dc3035e381ab52be8f17f21a9c4c1b8b53"
+    },
+    "spxw-2025-11-20.statistics.dbn.zst": {
+      "start": "2025-11-20",
+      "end": "2025-11-21",
+      "records_sha256": "f6d768d697f44d2b2da6d7c0ed30a1c6e796f0cc8342ba5ef70d70eb5987e0b5"
+    },
+    "spxw-2025-11-20.cbbo-1s.dbn.zst": {
+      "start": "2025-11-20T15:30:00-05:00",
+      "end": "2025-11-20T15:46:00-05:00",
+      "records_sha256": "2d915a79ef4ee4d2a6da08a4da6583d3a0db44aefbfadf259c32d72caf1cb7c0"
+    },
+    "spxw-2026-03-18.definition.dbn.zst": {
+      "start": "2026-03-18",
+      "end": "2026-03-19",
+      "records_sha256": "1ed08900355cfb6bd5b8f9cf85236f124a9e3be54347a9377520d2d830e57afe"
+    },
+    "spxw-2026-03-18.statistics.dbn.zst": {
+      "start": "2026-03-18",
+      "end": "2026-03-19",
+      "records_sha256": "b91cba2b363e8dcfe47ce3e3d874cbf895ad6bb2074f629af07609ae6b5dd935"
+    },
+    "spxw-2026-03-18.cbbo-1s.dbn.zst": {
+      "start": "2026-03-18T15:30:00-04:00",
+      "end": "2026-03-18T15:46:00-04:00",
+      "records_sha256": "322a5a0b2a63f40afef9349f416012fc168b9219d8c02de33b91a619cf74bb49"
+    },
+    "spxw-2026-03-20.definition.dbn.zst": {
+      "start": "2026-03-20",
+      "end": "2026-03-21",
+      "records_sha256": "2e4a6934054bd952e9f6c67a8c256d8ea59540fcc95b5157d4006049feabdc25"
+    },
+    "spxw-2026-03-20.statistics.dbn.zst": {
+      "start": "2026-03-20",
+      "end": "2026-03-21",
+      "records_sha256": "c6c0e5fe45d37d9d426d0484be5e4691f92e6e31e67e8ee448c0323b530ce9d0"
+    },
+    "spxw-2026-03-20.cbbo-1s.dbn.zst": {
+      "start": "2026-03-20T15:30:00-04:00",
+      "end": "2026-03-20T15:46:00-04:00",
+      "records_sha256": "b3e2dbebce9568078ccd606f0a527a6501cb344f589a4af229bf5b250c0aa7bb"
+    },
+    "spxw-2025-11-26.definition.dbn.zst": {
+      "start": "2025-11-26",
+      "end": "2025-11-27",
+      "records_sha256": "fbea01984c3801c3d8f95dfe332b1672b5cab20f8e38f525b3997bb4984b1cd9"
+    },
+    "spxw-2025-11-26.statistics.dbn.zst": {
+      "start": "2025-11-26",
+      "end": "2025-11-27",
+      "records_sha256": "626cf28634083970367a23958496cf0b9042e189da6b23e93e730d20dc0dedf5"
+    },
+    "spxw-2025-11-26.cbbo-1s.dbn.zst": {
+      "start": "2025-11-26T15:30:00-05:00",
+      "end": "2025-11-26T15:46:00-05:00",
+      "records_sha256": "24768339c0bb07e35c4733419b6c2e52de47ed8b0b0d3ec32f870ad29ed7b6c2"
+    },
+    "spxw-2026-05-04.definition.dbn.zst": {
+      "start": "2026-05-04",
+      "end": "2026-05-05",
+      "records_sha256": "1459ae7186c2f62c890e1f73ada2b1d330469cecb9bde1f88738fcbf95e5b0bd"
+    },
+    "spxw-2026-05-04.statistics.dbn.zst": {
+      "start": "2026-05-04",
+      "end": "2026-05-05",
+      "records_sha256": "183fe8fd36ffd5c967b8a90ae0fe21b6da9478e15ed8390971adf868745261e6"
+    },
+    "spxw-2026-05-04.cbbo-1s.dbn.zst": {
+      "start": "2026-05-04T15:30:00-04:00",
+      "end": "2026-05-04T15:46:00-04:00",
+      "records_sha256": "dfc1a183a98e75bf7f74fee054f1c014b67c29426dfa3bf79a30a722a7bc1d3b"
+    }
+  }
+}
