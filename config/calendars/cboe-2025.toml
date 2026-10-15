@@ -1,0 +1,86 @@
+# Trading calendar: Cboe index options (SPXW), 2025, in the format of the engine's own
+# cboe-2026.toml, which the engine does not ship for 2025. Early-close days are listed as
+# closed, as the engine's calendars do.
+#
+# Sources:
+# - NYSE, holidays and trading hours: https://www.nyse.com/markets/hours-calendars
+# - Cboe, United States options holiday calendar: https://www.cboe.com/about/hours/us-options/
+
+market = "CBOE"
+year = 2025
+timezone = "America/New_York"
+
+[[sessions]]
+from = 2025-01-01
+open = 09:30:00
+close = 16:15:00
+
+[[closed]]
+date = 2025-01-01
+kind = "holiday"
+name = "New Year's Day"
+
+[[closed]]
+date = 2025-01-09
+kind = "holiday"
+name = "National Day of Mourning for President Jimmy Carter"
+
+[[closed]]
+date = 2025-01-20
+kind = "holiday"
+name = "Martin Luther King Jr. Day"
+
+[[closed]]
+date = 2025-02-17
+kind = "holiday"
+name = "Washington's Birthday"
+
+[[closed]]
+date = 2025-04-18
+kind = "holiday"
+name = "Good Friday"
+
+[[closed]]
+date = 2025-05-26
+kind = "holiday"
+name = "Memorial Day"
+
+[[closed]]
+date = 2025-06-19
+kind = "holiday"
+name = "Juneteenth"
+
+[[closed]]
+date = 2025-07-03
+kind = "early close"
+name = "Day before Independence Day (1:00 p.m. close, options 1:15 p.m.)"
+
+[[closed]]
+date = 2025-07-04
+kind = "holiday"
+name = "Independence Day"
+
+[[closed]]
+date = 2025-09-01
+kind = "holiday"
+name = "Labor Day"
+
+[[closed]]
+date = 2025-11-27
+kind = "holiday"
+name = "Thanksgiving Day"
+
+[[closed]]
+date = 2025-11-28
+kind = "early close"
+name = "Day after Thanksgiving (1:00 p.m. close, options 1:15 p.m.)"
+
+[[closed]]
+date = 2025-12-24
+kind = "early close"
+name = "Christmas Eve (1:00 p.m. close, options 1:15 p.m.)"
+
+[[closed]]
+date = 2025-12-25
+kind = "holiday"
+name = "Christmas Day"

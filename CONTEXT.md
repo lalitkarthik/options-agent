@@ -18,7 +18,7 @@ it.
 - **Snapshot day** — a trading day whose data has been downloaded and frozen; P1 has six, listed in `docs/roadmap.md`.
 - **Raw file** — one Databento download for a snapshot day (`definition`, `statistics` or `cbbo-1s`), kept in `data/raw/` and never in git.
 - **As-of time** — the moment every question is about: 15:45 New York time on a snapshot day.
-- **Snapshot** — the engine's figures for one snapshot day at the as-of time, built once by engine replay and never changed.
+- **Snapshot** — the engine's figures for one snapshot day at the as-of time, built once by engine replay and never changed; `snapshots/<day>.json`, built by `scripts/build_snapshots.py`.
 
 ## The engine and its figures
 
@@ -30,7 +30,7 @@ it.
 - **ATM IV** — the implied volatility at the forward, for one expiry.
 - **Skew figures** — one expiry's implied volatility read at fixed points: at the forward, at the 25-delta put and call, at the 10-delta put, and the slopes between them.
 - **25-delta put / call** — the strike whose forward delta is 25% (put) or 25% (call), where skew is read.
-- **Risk reversal** — 25-delta call IV minus 25-delta put IV; negative when puts are dearer. *(draft; if the engine publishes it, its definition wins; settled in the snapshot builder ticket)*
+- **Risk reversal** — 25-delta call IV minus 25-delta put IV; negative when puts are dearer. The engine's `Skew.risk_reversal` (its decision 0081).
 - **Realised volatility (RV)** — how much the index actually moved, from its one-minute candles, made yearly; since the open, or close-to-close over 20 sessions.
 - **Implied-realised gap** — implied volatility minus realised volatility, as the engine computes it.
 - **Implied move** — the index move the at-the-money straddle prices in, for one expiry.
