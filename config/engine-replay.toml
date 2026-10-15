@@ -1,0 +1,55 @@
+# Engine settings for the snapshot builder (scripts/build_snapshots.py): the engine's own
+# config/spxw-sandbox.toml cut down to what an offline replay needs. Two changes from it:
+# every expiry is taken in (dte_max), and the calendar folder, set by the script, adds 2025.
+
+[instance]
+name = "options-agent-replay"
+mode = "sandbox"
+
+[markets.spxw]
+venue = "CBOE"
+timezone = "America/New_York"
+sessions = [
+    { days = ["mon", "tue", "wed", "thu", "fri"], start = 09:30:00, end = 16:15:00 },
+]
+
+[feeds.databento-spxw]
+adapter = "databento"
+market = "spxw"
+subscriptions = ["SPXW.OPT"]
+dte_min = 0
+dte_max = 3650                    # every expiry in the files, not only today's and tomorrow's
+stale_after_seconds = 5
+heartbeat_seconds = 5
+dataset = "OPRA.PILLAR"
+quote_schema = "cbbo-1s"
+trades = false                    # no trades file was downloaded
+statistics = true                 # open interest
+
+[recorder]
+directory = "recordings"          # required by the settings; nothing is recorded
+
+[chain]
+max_spread_share = 0.30
+snapshot_seconds = 10
+recompute_floor_ms = 100
+near_expiry_minutes = 15
+
+# The engine's own realised-volatility settings, copied from config/spxw-sandbox.toml.
+[chain.volatility]
+window_samples = [5, 15, 30, 60, 100, 200]
+sampling_minutes = [1, 5, 15, 60]
+default_sampling_minutes = { SPXW = 5 }
+bucket_minutes = 15
+min_sessions = 5
+first_candle_limit_minutes = 2
+minutes_present_share = 0.9
+morning_reading_minutes = 5
+reading_sessions = 30
+
+[chain.roots.SPXW]
+market = "spxw"
+calendar = "CBOE"
+expiry_time = 16:00:00
+candles_from = "implied_index_level"
+open_interest = "start_of_day"
