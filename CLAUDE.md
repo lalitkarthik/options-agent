@@ -5,9 +5,11 @@ here matters more than speed. Read [docs/roadmap.md](docs/roadmap.md) before any
 
 ## Rules
 
-- **`learn` tickets are Lalit's to write.** Do not write their implementation code, even when
-  asked casually mid-session; explain, point at the concept, review. Tests and code for `glue`
-  tickets are fine. In P1, Claude builds each `glue` ticket directly as a PR into `main` that
+- **`learn` tickets are written together.** Claude writes the code in chat in small pieces (one
+  test, then the code that passes it), each with the file it goes in, what every line does and
+  where the pattern comes from (linked source). Before each piece Claude asks Lalit one quick
+  question (what the test should check, which kind of error fits) and shows the code after the
+  answer. Lalit types it into the file and runs it; Claude does not edit `learn` files itself. In P1, Claude builds each `glue` ticket directly as a PR into `main` that
   Lalit skims and merges; feature-loop's orchestrator is kept for later phases.
 - **Every `glue` PR carries a walkthrough** so nothing is a black box: what was built, file by
   file in plain words; why each choice was made; the concepts it touches with resources; and a
@@ -16,7 +18,7 @@ here matters more than speed. Read [docs/roadmap.md](docs/roadmap.md) before any
   this GitHub repo. With every walkthrough, and at the start of every `learn` ticket, give a
   fenced prompt for it that names the repo, the issue or PR, the exact files and docs to read
   (`CONTEXT.md`, the spec, the decision records), what to explain at a beginner's level, and, for
-  `learn` tickets, an instruction to teach and quiz rather than write the solution.
+  `learn` tickets, an instruction to explain the code written so far and quiz on it.
 - **Teach when a concept comes up:** explain it in chat, then list every genuinely good video,
   article and official doc (ranked, "start here" first; not a fixed one of each) in the ticket
   issue under "Concepts". Not `/study` sessions, not separate notes.

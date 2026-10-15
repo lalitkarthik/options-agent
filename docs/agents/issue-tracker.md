@@ -28,7 +28,7 @@ plus the triage label that goes with it:
 
 | Kind | Labels | Who builds it | How it merges |
 | --- | --- | --- | --- |
-| `learn` | `ticket`, `learn`, `ready-for-human` | Lalit, by hand, test-first | Lalit merges after review |
+| `learn` | `ticket`, `learn`, `ready-for-human` | Lalit types it, test-first, from code Claude writes and explains in chat | Lalit merges after review |
 | `glue` | `ticket`, `glue`, `ready-for-agent` | the feature loop's implementer | the feature loop, when green |
 
 The frontier query below skips `ready-for-human`, so the feature loop never picks up a `learn`

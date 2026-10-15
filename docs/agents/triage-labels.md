@@ -23,5 +23,5 @@ Labels added for this learning repo:
 
 | Label | Meaning |
 | --- | --- |
-| `learn` | Lalit builds it by hand to learn the concept; always with `ready-for-human` |
+| `learn` | Lalit types it from code Claude writes and explains in chat, to learn the concept; always with `ready-for-human` |
 | `glue` | Plumbing or a repeat of a learned pattern; the feature loop builds it; always with `ready-for-agent` |
