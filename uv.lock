@@ -626,7 +626,6 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "databento" },
-    { name = "zstandard" },
 ]
 
 [package.dev-dependencies]
@@ -637,10 +636,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "databento", specifier = ">=0.87" },
-    { name = "zstandard", specifier = ">=0.25" },
-]
+requires-dist = [{ name = "databento", specifier = ">=0.87" }]
 
 [package.metadata.requires-dev]
 dev = [

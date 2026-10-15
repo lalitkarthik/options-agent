@@ -1,8 +1,6 @@
-"""Download the raw Databento files for the snapshot days and check them against a manifest."""
+"""Download the raw Databento files for the snapshot days, or check that they are all there."""
 
 import argparse
-import hashlib
-import json
 import os
 import sys
 import time
@@ -13,10 +11,10 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import databento
-import zstandard
 
 # The six snapshot days and why each was picked: docs/roadmap.md, "Data rules".
 SNAPSHOT_DAYS = ["2026-06-02", "2025-11-20", "2026-03-18", "2026-03-20", "2025-11-26", "2026-05-04"]
+DATA_DIR = Path("data/raw")
 DATASET = "OPRA.PILLAR"
 NEW_YORK = ZoneInfo("America/New_York")
 ATTEMPTS = 5
@@ -52,63 +50,11 @@ def plan_day(day: str) -> list[RawFile]:
     ]
 
 
-class DamagedFile(Exception):
-    """The file cannot be read as a complete DBN file."""
-
-
-def read_exactly(stream, n: int) -> bytes:
-    data = stream.read(n)
-    if len(data) != n:
-        raise DamagedFile
-    return data
-
-
-def records_sha256(path: Path) -> str:
-    """The SHA-256 of the file's records: decompressed, without the DBN header.
-
-    The header is left out on purpose. It lists the symbol mappings, and Databento writes them
-    in a different order on every download, so two downloads of the same data differ as files
-    while their records are identical byte for byte. The file is read 1 MB at a time, so a
-    300 MB file never sits in memory whole."""
-    digest = hashlib.sha256()
-    try:
-        with path.open("rb") as f, zstandard.ZstdDecompressor().stream_reader(f) as stream:
-            if read_exactly(stream, 3) != b"DBN":
-                raise DamagedFile
-            stream.read(1)  # the DBN version
-            header_length = int.from_bytes(read_exactly(stream, 4), "little")
-            read_exactly(stream, header_length)
-            while chunk := stream.read(1 << 20):
-                digest.update(chunk)
-    except zstandard.ZstdError as err:
-        raise DamagedFile from err
-    return digest.hexdigest()
-
-
-def check_file(path: Path, expected: dict) -> str | None:
-    """What is wrong with one file against its manifest entry, or None if it matches."""
-    if not path.exists():
-        return f"missing: {path.name}"
-    try:
-        actual = records_sha256(path)
-    except DamagedFile:
-        return f"damaged: {path.name} (not a complete DBN file)"
-    if actual != expected["records_sha256"]:
-        return f"changed: {path.name} (its records differ from the manifest)"
-    return None
-
-
-def verify(data_dir: Path, manifest: dict) -> list[str]:
-    """Every problem with the files the manifest lists, one line each; empty if all match."""
-    problems = (check_file(data_dir / name, e) for name, e in manifest["files"].items())
-    return [p for p in problems if p is not None]
-
-
 def download_with_retries(
     raw_file: RawFile,
     path: Path,
     download: Callable[[RawFile, Path], None],
-    sleep: Callable[[float], None],
+    sleep: Callable[[float], None] = time.sleep,
 ) -> str | None:
     """Download one file, retrying Databento server errors (5xx, such as 504 timeouts) with a
     longer wait each time. Returns a problem line if every attempt failed, else None.
@@ -138,43 +84,6 @@ def download_with_retries(
     return f"failed: {path.name} (gave up after {ATTEMPTS} attempts)"
 
 
-def fetch(
-    data_dir: Path,
-    manifest: dict,
-    days: list[str],
-    download: Callable[[RawFile, Path], None],
-    sleep: Callable[[float], None] = time.sleep,
-) -> list[str]:
-    """Make sure every file the days need is in `data_dir`, downloading only the missing ones.
-
-    A file already on disk is checked against its manifest entry and never downloaded again.
-    A downloaded file not yet in the manifest is added to `manifest` (the caller saves it).
-    Returns every problem found, one line each; empty if all is well."""
-    problems = []
-    for raw_file in (f for day in days for f in plan_day(day)):
-        path = data_dir / raw_file.name
-        expected = manifest["files"].get(raw_file.name)
-        if not path.exists():
-            failure = download_with_retries(raw_file, path, download, sleep)
-            if failure:
-                problems.append(failure)
-                continue
-        if expected is None:
-            try:
-                checksum = records_sha256(path)
-            except DamagedFile:
-                problems.append(f"damaged: {path.name} (not a complete DBN file)")
-                continue
-            manifest["files"][raw_file.name] = {
-                "start": raw_file.start,
-                "end": raw_file.end,
-                "records_sha256": checksum,
-            }
-        elif problem := check_file(path, expected):
-            problems.append(problem)
-    return problems
-
-
 def databento_download(raw_file: RawFile, path: Path) -> None:
     """Download one file from Databento: every SPXW contract (the `SPXW.OPT` parent symbol).
     The client reads the key from the DATABENTO_API_KEY environment variable itself, so this
@@ -190,56 +99,41 @@ def databento_download(raw_file: RawFile, path: Path) -> None:
     )
 
 
-def load_manifest(path: Path) -> dict:
-    if path.exists():
-        return json.loads(path.read_text())
-    return {
-        "dataset": DATASET,
-        "symbols": "SPXW.OPT (parent)",
-        "window_et": "15:30-15:46",
-        "files": {},
-    }
-
-
 def main(
     argv: list[str] | None = None,
     download: Callable[[RawFile, Path], None] = databento_download,
+    data_dir: Path = DATA_DIR,
 ) -> int:
     parser = argparse.ArgumentParser(
         prog="fetch-data",
-        description="Download the snapshot days' raw Databento files and check their checksums.",
+        description="Download the snapshot days' raw Databento files into data/raw.",
     )
-    parser.add_argument("--verify", action="store_true", help="only check files, download nothing")
-    parser.add_argument("--data-dir", type=Path, default=Path("data/raw"))
-    parser.add_argument("--manifest", type=Path, default=Path("data/manifest.json"))
+    parser.add_argument(
+        "--verify", action="store_true", help="only check every file is there, download nothing"
+    )
     args = parser.parse_args(argv)
 
-    manifest = load_manifest(args.manifest)
+    planned = [f for day in SNAPSHOT_DAYS for f in plan_day(day)]
+    missing = [f for f in planned if not (data_dir / f.name).exists()]
+
     if args.verify:
-        problems = verify(args.data_dir, manifest)
+        problems = [f"missing: {f.name}" for f in missing]
+    elif missing and KEY_VARIABLE not in os.environ:
+        print(
+            f"{KEY_VARIABLE} is not set; it is needed to download {len(missing)} missing "
+            "file(s). Set it in your shell, never in a committed file.",
+            file=sys.stderr,
+        )
+        return 2
     else:
-        missing = [
-            f.name
-            for day in SNAPSHOT_DAYS
-            for f in plan_day(day)
-            if not (args.data_dir / f.name).exists()
-        ]
-        if missing and KEY_VARIABLE not in os.environ:
-            print(
-                f"{KEY_VARIABLE} is not set; it is needed to download {len(missing)} missing "
-                "file(s). Set it in your shell, never in a committed file.",
-                file=sys.stderr,
-            )
-            return 2
-        args.data_dir.mkdir(parents=True, exist_ok=True)
-        problems = fetch(args.data_dir, manifest, SNAPSHOT_DAYS, download)
-        args.manifest.parent.mkdir(parents=True, exist_ok=True)
-        args.manifest.write_text(json.dumps(manifest, indent=2) + "\n")
+        data_dir.mkdir(parents=True, exist_ok=True)
+        results = (download_with_retries(f, data_dir / f.name, download) for f in missing)
+        problems = [p for p in results if p is not None]
 
     for problem in problems:
         print(problem)
     if problems:
         print(f"{len(problems)} problem(s) found")
         return 1
-    print(f"all {len(manifest['files'])} files match the manifest")
+    print(f"all {len(planned)} files are in {data_dir}")
     return 0
