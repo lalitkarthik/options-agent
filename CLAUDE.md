@@ -7,7 +7,16 @@ here matters more than speed. Read [docs/roadmap.md](docs/roadmap.md) before any
 
 - **`learn` tickets are Lalit's to write.** Do not write their implementation code, even when
   asked casually mid-session; explain, point at the concept, review. Tests and code for `glue`
-  tickets are fine, and feature-loop builds those.
+  tickets are fine. In P1, Claude builds each `glue` ticket directly as a PR into `main` that
+  Lalit skims and merges; feature-loop's orchestrator is kept for later phases.
+- **Every `glue` PR carries a walkthrough** so nothing is a black box: what was built, file by
+  file in plain words; why each choice was made; the concepts it touches with resources; and a
+  ready-to-paste ChatGPT prompt (below).
+- **Doubts go to ChatGPT, to save Claude usage.** Lalit has a ChatGPT Go project connected to
+  this GitHub repo. With every walkthrough, and at the start of every `learn` ticket, give a
+  fenced prompt for it that names the repo, the issue or PR, the exact files and docs to read
+  (`CONTEXT.md`, the spec, the decision records), what to explain at a beginner's level, and, for
+  `learn` tickets, an instruction to teach and quiz rather than write the solution.
 - **Teach when a concept comes up:** explain it in chat, then list every genuinely good video,
   article and official doc (ranked, "start here" first; not a fixed one of each) in the ticket
   issue under "Concepts". Not `/study` sessions, not separate notes.
@@ -43,7 +52,7 @@ its tickets are sub-issues labelled `ticket` with native blocked-by edges. See
 
 ### Commands
 
-These become real once #2 (repo skeleton) lands.
+Real since #2 (repo skeleton).
 
 | Step | Command |
 | --- | --- |

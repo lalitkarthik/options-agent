@@ -1,0 +1,30 @@
+[project]
+name = "options-agent"
+version = "0.1.0"
+description = "An agent that answers SPX options questions from frozen engine figures over MCP, scored by an exam"
+requires-python = ">=3.13"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "anyio>=4",
+    "ruff>=0.13",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+# Owned by the feature-loop harness and overwritten on setup; not ours to lint.
+extend-exclude = ["scripts/claude"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
