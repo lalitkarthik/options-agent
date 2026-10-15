@@ -4,7 +4,7 @@ Status: accepted (2026-10-14)
 
 The Databento licence does not allow redistributing raw data, and the repo will go public. API keys and the daily Upstox token are secrets.
 
-**Decision.** Raw files live in `data/`, which git ignores; the repo carries a fetch script and a manifest of checksums. Credentials come from environment variables only.
+**Decision.** Raw files live in `data/`, which git ignores; the repo carries a fetch script that downloads them again. Credentials come from environment variables only.
 
 ## Considered options
 

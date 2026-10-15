@@ -16,6 +16,7 @@ it.
 - **Quote** — a contract's best bid and best ask at a moment, from Databento's `cbbo-1s` feed.
 - **Open interest** — how many contracts of an option are currently held, published once a day before the open; Databento's `statistics` feed.
 - **Snapshot day** — a trading day whose data has been downloaded and frozen; P1 has six, listed in `docs/roadmap.md`.
+- **Raw file** — one Databento download for a snapshot day (`definition`, `statistics` or `cbbo-1s`), kept in `data/raw/` and never in git.
 - **As-of time** — the moment every question is about: 15:45 New York time on a snapshot day.
 - **Snapshot** — the engine's figures for one snapshot day at the as-of time, built once by engine replay and never changed.
 

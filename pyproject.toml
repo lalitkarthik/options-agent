@@ -3,7 +3,12 @@ name = "options-agent"
 version = "0.1.0"
 description = "An agent that answers SPX options questions from frozen engine figures over MCP, scored by an exam"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "databento>=0.87",
+]
+
+[project.scripts]
+fetch-data = "options_agent.fetch:main"
 
 [dependency-groups]
 dev = [

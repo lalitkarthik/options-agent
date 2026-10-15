@@ -66,7 +66,7 @@ observes the loop without changing it.
 4. As Lalit, I want the snapshot builder checked against the engine's own output for one day, so that I can trust the answer key.
 5. As Lalit, I want the stored Backtest-Engine figures used only as a cross-check, so that disagreements between the two pipelines surface as findings.
 6. As Lalit, I want raw Databento files and credentials kept out of git, so that the repo can go public without breaking the data licence.
-7. As Lalit, I want a fetch script with a checksum manifest, so that the six days can be downloaded again and verified.
+7. As Lalit, I want a fetch script, so that the six days can be downloaded again and checked to be all there.
 8. As an analyst, I want to ask which snapshot days exist, so that I know what I can ask about.
 9. As an analyst, I want to list the expiries on a snapshot day, so that I can pick one.
 10. As an analyst, I want a capped view of an expiry's chain around the forward, so that I can see quotes, IV and greeks without a flood of rows.
