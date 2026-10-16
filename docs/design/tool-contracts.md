@@ -8,15 +8,15 @@ this page word for word ([0006](decisions/0006-seven-high-level-tools.md)).
 in a quote block is the tool's docstring, exactly as the model sees it. An error in a code block
 is the exact message, after the SDK's `Error executing tool <name>: ` prefix.
 
-**Status.** Design phase (2026-10-16). `list_dates` and `get_skew` are built (#5); the other
-five are not.
+**Status.** Built (2026-10-16): `list_dates` and `get_skew` in #5, the other five in #6.
 
 ## Rules for every tool
 
 - **Provenance.** Every result carries `date`, `snapshot` (the file name), `as_of` (15:45 New
   York with its UTC offset) and `engine_commit`.
 - **Figures.** Every number is a **figure**: `{id, value, unit}`. The unit comes from the unit
-  list in `CONTEXT.md`; the **figure id** follows the format there.
+  list in `CONTEXT.md`; the **figure id** follows the format there. The tool groups are `chain`,
+  `skew`, `realised` (get_realised_vol), `move` (get_implied_move) and `gamma`.
 - **Two kinds of "no data".** A wrong input is a tool error listing the valid values. A figure the
   engine could not compute is a normal result: its id is listed in `missing` and it is left out
   of `figures`.
