@@ -1,6 +1,6 @@
 # Raw market data never enters git (Databento licence; see docs/roadmap.md)
 data/
-snapshots/
+/snapshots/
 *.dbn
 *.dbn.zst
 *.parquet

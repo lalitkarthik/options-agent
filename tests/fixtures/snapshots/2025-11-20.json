@@ -1,0 +1,36 @@
+{
+  "day": "2025-11-20",
+  "as_of": "2025-11-20T15:45:00-05:00",
+  "engine_commit": "345539eaef2caee1fd94d773d2eefe71de33ac9a",
+  "skews": [
+    {
+      "expiry": "2025-11-20",
+      "forward": 6548.3,
+      "atm_iv": 0.2415,
+      "points": [
+        {
+          "delta": 25,
+          "put_iv": 0.2527,
+          "put_strike": 6534.5,
+          "put_skew": 0.0112,
+          "call_iv": 0.2447,
+          "call_strike": 6561.8,
+          "call_skew": 0.0032,
+          "risk_reversal": -0.008,
+          "butterfly": 0.0072
+        },
+        {
+          "delta": 10,
+          "put_iv": 0.2809,
+          "put_strike": 6519.2,
+          "put_skew": 0.0394,
+          "call_iv": null,
+          "call_strike": null,
+          "call_skew": null,
+          "risk_reversal": null,
+          "butterfly": null
+        }
+      ]
+    }
+  ]
+}
