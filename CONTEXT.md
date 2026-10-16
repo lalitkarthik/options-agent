@@ -44,7 +44,7 @@ it.
 - **MCP server** — the program that offers the tools to the agent over the Model Context Protocol.
 - **Tool** — one function the agent can call, such as `get_skew`; returns figures with their provenance.
 - **Figure** — one number a tool returns, with its unit and figure id.
-- **Figure id** — a short readable name a tool gives each figure, such as `skew:2026-03-18:2026-04-17:put25`; the answer cites it.
+- **Figure id** — a short readable name a tool gives each figure, `<tool group>:<date>:<expiry, scope or kind>:<name>`, such as `skew:2026-03-18:2026-04-17:put_25_iv` or `gamma:2026-03-18:all:flip` (chain figures add the strike: `chain:<date>:<expiry>:<strike>:<name>`); the answer cites it. The names are listed per tool in `docs/design/tool-contracts.md`.
 - **Provenance** — where a figure came from: snapshot, as-of time, engine version.
 - **Agent loop** — the code that sends the conversation to the model, runs the tools it asks for, sends results back, and repeats until it stops.
 - **Turn** — one model call in the agent loop, with the tool calls it asked for.
@@ -53,7 +53,7 @@ it.
 - **Submission** — the agent's final answer, delivered by calling the `submit_answer` tool.
 - **Answer form** — the shape of a submission: status, prose answer, numbers with units and figure ids, missing data. *(draft; settled in the `submit_answer` ticket)*
 - **Status** — `answered` or `cannot_answer`.
-- **Unit** — one of a fixed list naming what a number measures, such as vol points or index points. *(draft; settled in the MCP server v0 ticket)*
+- **Unit** — one of a fixed list naming what a number measures: `decimal_vol` (a volatility as a yearly decimal, 0.2415 is 24.15%), `vol_points` (a difference between volatilities, in percentage points), `index_points` (an index level, strike, index move or option price), `ratio` (a delta), `per_index_point` (gamma: change in delta per index point), `index_points_per_vol_point` (vega), `usd_per_1pct_move` (gamma exposure).
 - **Guardrail** — a check the agent loop runs on a submission before accepting it, such as "every number matches a figure a tool returned".
 - **No submission** — the outcome when the model stops without submitting after its nudges or runs out of budget.
 

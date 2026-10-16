@@ -5,6 +5,8 @@ description = "An agent that answers SPX options questions from frozen engine fi
 requires-python = ">=3.13"
 dependencies = [
     "databento>=0.87",
+    "mcp>=2.3.0",
+    "pydantic>=2.14.1",
 ]
 
 [project.scripts]
