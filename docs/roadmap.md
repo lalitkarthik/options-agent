@@ -64,7 +64,7 @@ Every ticket carries one label, suggested when tickets are written and Lalit's t
 
 - **`learn`**: the first time a concept appears (first MCP tool, first queue consumer, first
   Terraform module, first reconnect loop). Written together: Claude writes each piece in chat
-  with an explanation and sources, and Lalit types it in.
+  with an explanation and sources; Lalit types it in, or has Claude write it once understood.
 - **`glue`**: repeats and plumbing (CRUD routes, UI, config). In P1 Claude builds each one as a
   PR into `main` with a walkthrough (what, file by file; why; concepts with resources; a ChatGPT
   prompt); Lalit skims and merges. From P2, feature-loop's orchestrator builds them; it skips
