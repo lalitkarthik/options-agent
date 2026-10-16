@@ -64,7 +64,7 @@ Every ticket carries one label, suggested when tickets are written and Lalit's t
 
 - **`learn`**: the first time a concept appears (first MCP tool, first queue consumer, first
   Terraform module, first reconnect loop). Written together: Claude writes each piece in chat
-  with an explanation and sources after one check question, and Lalit types it in.
+  with an explanation and sources; Lalit types it in, or has Claude write it once understood.
 - **`glue`**: repeats and plumbing (CRUD routes, UI, config). In P1 Claude builds each one as a
   PR into `main` with a walkthrough (what, file by file; why; concepts with resources; a ChatGPT
   prompt); Lalit skims and merges. From P2, feature-loop's orchestrator builds them; it skips
@@ -82,7 +82,7 @@ A `learn` ticket goes:
    resources in the ticket issue under a "Concepts" heading: every genuinely good video, article
    and official doc, ranked "start here" first, not a fixed one of each. Then doubts, back and
    forth. No separate notes system.
-3. **Build test-first, together** (mattpocock `tdd`): one check question, then Claude shows a
+3. **Build test-first, together** (mattpocock `tdd`): Claude shows a
    failing test in chat and Lalit types it in; the same for the code that makes it pass; clean up.
 4. **Review**: open a PR, run `/code-review high --comment` (inline comments) and mattpocock
    `code-review` (does it match the ticket). The reviewer explains the problem and the concept
