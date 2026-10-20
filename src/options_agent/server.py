@@ -325,8 +325,8 @@ def build_server(snapshot_dir: Path) -> MCPServer:
         where the total crosses zero), and the walls: resistance, the strikes with the largest
         positive exposure, and support, the strikes with the most negative, strongest first. If
         the engine found no crossing near the index, the flip is listed in `missing`: there is
-        no gamma flip in range, which is an answer in itself. Exposure per strike is not
-        returned.
+        no gamma flip in range, so a question asking for it is answered with cannot_answer,
+        listing the flip as missing data. Exposure per strike is not returned.
         """
         snapshot = find_snapshot(date)
         # The engine publishes one gamma entry per expiry, and one with no expiry for them all.
