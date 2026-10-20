@@ -149,8 +149,9 @@ is the exact message, after the SDK's `Error executing tool <name>: ` prefix.
 > time, the gamma flip (the index level nearest today's where the total crosses zero), and the
 > walls: resistance, the strikes with the largest positive exposure, and support, the strikes
 > with the most negative, strongest first. If the engine found no crossing near the index, the
-> flip is listed in `missing`: there is no gamma flip in range, which is an answer in itself.
-> Exposure per strike is not returned.
+> flip is listed in `missing`: there is no gamma flip in range, so a question asking for it is
+> answered with cannot_answer, listing the flip as missing data. Exposure per strike is not
+> returned.
 
 - **Result.** Provenance, `scope`, `figures`, `missing`.
 - **Figures.** `net_total` (`usd_per_1pct_move`); `spot`, `flip` (`index_points`);

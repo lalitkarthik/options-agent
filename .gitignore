@@ -24,3 +24,6 @@ node_modules/
 # Claude Code
 .claude/worktrees/
 .playwright-cli/
+
+# Inspect eval logs
+logs/
