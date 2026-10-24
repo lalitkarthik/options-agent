@@ -51,7 +51,8 @@ it.
 - **Budget** — the agent loop's hard limits per question: turns, tokens and cost.
 - **Nudge** — the short "continue" message the agent loop sends when the model stops without submitting.
 - **Submission** — the agent's final answer, delivered by calling the `submit_answer` tool.
-- **Answer form** — the shape of a submission: status, prose answer, numbers with units and figure ids, missing data. *(draft; settled in the `submit_answer` ticket)*
+- **Answer form** — the shape of a submission, given as the `submit_answer` tool's input under a strict schema: `status`, `answer` (prose), `numbers` (each with name, value, unit and figure id) and `missing_data`, every field required.
+- **Sources** — the provenance of the figures a submission cites, filled in by the agent loop from their figure ids, not written by the model.
 - **Status** — `answered` or `cannot_answer`.
 - **Unit** — one of a fixed list naming what a number measures: `decimal_vol` (a volatility as a yearly decimal, 0.2415 is 24.15%), `vol_points` (a difference between volatilities, in percentage points), `index_points` (an index level, strike, index move or option price), `ratio` (a delta), `per_index_point` (gamma: change in delta per index point), `index_points_per_vol_point` (vega), `usd_per_1pct_move` (gamma exposure).
 - **Guardrail** — a check the agent loop runs on a submission before accepting it, such as "every number matches a figure a tool returned".

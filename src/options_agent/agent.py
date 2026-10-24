@@ -2,10 +2,14 @@ import asyncio
 import ssl
 import sys
 from dataclasses import dataclass, field
-from typing import Any, Literal
+from decimal import Decimal
+from typing import Any, Literal, get_args
 
 from anthropic import AsyncAnthropic, DefaultAsyncHttpxClient
 from mcp import Client, StdioServerParameters
+
+from options_agent.grader import Submission
+from options_agent.server import Unit
 
 MODEL = "claude-sonnet-5-5"
 
@@ -18,14 +22,61 @@ PRICE_CACHE_READ = 0.20
 SYSTEM_PROMPT = """You answer questions about S&P 500 index options (SPXW) on a few frozen \
 trading days. Every question is about 15:45 New York time on its day.
 
-Use the tools to get every number; never estimate or compute one yourself. If a tool says a \
-figure is missing, or the day is not in list_dates, say the question cannot be answered and \
-why. In your answer give each number with its unit and the figure id the tool returned."""
+Use the tools to get every number; never estimate, compute or convert one yourself. Give each \
+number exactly as a tool returned it, with that tool's unit and figure id.
+
+Finish only by calling submit_answer. A correct answer earns 1 point, cannot_answer earns 0 and \
+a wrong answer costs 3 points, so answer only if you are more than 75% sure. If a tool says a \
+figure is missing, or the day is not in list_dates, submit cannot_answer and list what is \
+missing in missing_data."""
+
+SUBMIT_ANSWER = {
+    "name": "submit_answer",
+    "description": (
+        "Submit your final answer; this is the only way to finish. status is answered or "
+        "cannot_answer. answer is the answer in prose. numbers lists every number in the "
+        "answer, each exactly as a tool returned it, with its unit and figure id. missing_data "
+        "lists the data you would need but no tool has; it must not be empty for cannot_answer."
+    ),
+    "strict": True,
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "status": {"type": "string", "enum": ["answered", "cannot_answer"]},
+            "answer": {"type": "string"},
+            "numbers": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string"},
+                        "value": {"type": "number"},
+                        "unit": {"type": "string", "enum": list(get_args(Unit))},
+                        "figure_id": {"type": "string"},
+                    },
+                    "required": ["name", "value", "unit", "figure_id"],
+                    "additionalProperties": False,
+                },
+            },
+            "missing_data": {"type": "array", "items": {"type": "string"}},
+        },
+        "required": ["status", "answer", "numbers", "missing_data"],
+        "additionalProperties": False,
+    },
+}
+
+# Inspect's react() continue message, adapted (docs/research/p1-references.md section 2.4).
+NUDGE = (
+    "Please proceed to the next step using your best judgement. If you believe you have "
+    "completed the task, call the submit_answer tool with your final answer."
+)
+MAX_NUDGES = 2
 
 SERVER = StdioServerParameters(command="uv", args=["run", "mcp-server"])
 
 Stop = Literal[
-    "answered",
+    "submitted",
+    "no_submission",
     "refused",
     "max_tokens",
     "out_of_turns",
@@ -80,7 +131,8 @@ DEFAULT_BUDGET = Budget()
 @dataclass
 class Outcome:
     stop: Stop
-    text: str
+    submission: Submission | None
+    sources: list[dict]
     turns: int
     spend: Spend
     messages: list = field(repr=False)
@@ -95,9 +147,10 @@ async def list_tools(mcp: Client) -> list[dict]:
     ]
 
 
-async def run_tool(mcp: Client, call: Any) -> dict:
-    """Call one tool and turn its result, or its error, into a tool_result block."""
+async def run_tool(mcp: Client, call: Any, seen: dict[str, dict]) -> dict:
+    """Call one tool, remember the figures it returned, and make its tool_result block."""
     result = await mcp.call_tool(call.name, call.input)
+    record_figures(result.structured_content, seen)
     text = "\n".join(block.text for block in result.content if block.type == "text")
     return {
         "type": "tool_result",
@@ -107,20 +160,61 @@ async def run_tool(mcp: Client, call: Any) -> dict:
     }
 
 
-def final_text(response: Any) -> str:
-    return "\n".join(block.text for block in response.content if block.type == "text")
+def record_figures(content: dict | None, seen: dict[str, dict]) -> None:
+    """Remember every figure in a tool result, with the snapshot it came from."""
+    for figure in (content or {}).get("figures", []):
+        seen[figure["id"]] = {
+            "value": figure["value"],
+            "unit": figure["unit"],
+            "source": {key: content[key] for key in ("snapshot", "as_of", "engine_commit")},
+        }
 
 
-def check_stop(response: Any, spend: Spend, budget: Budget) -> Stop | None:
-    """Why the run ends after this reply, or None to run the tools and carry on."""
-    if response.stop_reason == "end_turn":
-        return "answered"
+def same_at_precision(submitted: float, returned: float) -> bool:
+    """True if the returned value rounds to the submitted one at the submitted decimals."""
+    decimals = max(0, -Decimal(str(submitted)).as_tuple().exponent)
+    return abs(returned - submitted) <= 0.5 * 10.0**-decimals + 1e-12
+
+
+def check_submission(submission: Submission, seen: dict[str, dict]) -> list[str]:
+    """Every guardrail the submission fails; an empty list means it is accepted."""
+    problems = []
+    if submission.status == "cannot_answer" and not submission.missing_data:
+        problems.append("cannot_answer needs missing_data to say what is missing.")
+    for number in submission.numbers:
+        figure = seen.get(number.figure_id)
+        if figure is None:
+            problems.append(f"{number.figure_id} is not a figure any tool returned in this run.")
+        elif number.unit.lower() != figure["unit"].lower():
+            problems.append(f"{number.figure_id} is in {figure['unit']}, not {number.unit}.")
+        elif not same_at_precision(number.value, figure["value"]):
+            problems.append(f"{number.figure_id} is {figure['value']}, not {number.value}.")
+    return problems
+
+
+def sources_for(submission: Submission, seen: dict[str, dict]) -> list[dict]:
+    """The snapshots behind the cited figures, each once, in the order first cited."""
+    sources: list[dict] = []
+    for number in submission.numbers:
+        source = seen[number.figure_id]["source"]
+        if source not in sources:
+            sources.append(source)
+    return sources
+
+
+def check_stop(response: Any) -> Stop | None:
+    """Why the run ends on this reply's stop reason, or None to carry on."""
     if response.stop_reason == "refusal":
         return "refused"
     if response.stop_reason == "max_tokens":
         return "max_tokens"
-    if response.stop_reason != "tool_use":
+    if response.stop_reason not in ("tool_use", "end_turn"):
         return "unexpected_stop"
+    return None
+
+
+def check_budget(spend: Spend, budget: Budget) -> Stop | None:
+    """Which budget is used up, or None if there is room for another call."""
     if spend.tokens > budget.tokens:
         return "out_of_tokens"
     if spend.dollars > budget.dollars:
@@ -135,11 +229,13 @@ async def run_agent(
     mcp: Client,
     budget: Budget = DEFAULT_BUDGET,
 ) -> Outcome:
-    """Question in, outcome out: loop until Claude stops calling tools or a budget runs out."""
-    tools = await list_tools(mcp)
+    """Question in, outcome out: loop until Claude submits an answer or the run must stop."""
+    tools = [*await list_tools(mcp), SUBMIT_ANSWER]
     system = [{"type": "text", "text": SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}}]
     messages: list = [{"role": "user", "content": question}]
     spend = Spend()
+    seen: dict[str, dict] = {}
+    nudges = 0
 
     for turns in range(1, budget.turns + 1):
         response = await claude.messages.create(
@@ -153,16 +249,43 @@ async def run_agent(
         spend.add(response.usage)
         messages.append({"role": "assistant", "content": response.content})
 
-        stop = check_stop(response, spend, budget)
+        stop = check_stop(response)
         if stop is not None:
-            text = final_text(response) if stop == "answered" else ""
-            return Outcome(stop, text, turns, spend, messages)
+            return Outcome(stop, None, [], turns, spend, messages)
 
-        calls = [block for block in response.content if block.type == "tool_use"]
-        results = await asyncio.gather(*(run_tool(mcp, call) for call in calls))
-        messages.append({"role": "user", "content": results})
+        if response.stop_reason == "end_turn":
+            if nudges == MAX_NUDGES:
+                return Outcome("no_submission", None, [], turns, spend, messages)
+            nudges += 1
+            reply: str | list = NUDGE
+        else:
+            calls = [block for block in response.content if block.type == "tool_use"]
+            tool_calls = [call for call in calls if call.name != "submit_answer"]
+            reply = await asyncio.gather(*(run_tool(mcp, call, seen) for call in tool_calls))
+            for call in calls:
+                if call.name != "submit_answer":
+                    continue
+                submission = Submission.model_validate(call.input)
+                problems = check_submission(submission, seen)
+                if not problems:
+                    sources = sources_for(submission, seen)
+                    return Outcome("submitted", submission, sources, turns, spend, messages)
+                rejection = "Submission rejected: " + " ".join(problems)
+                reply.append(
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": call.id,
+                        "content": rejection,
+                        "is_error": True,
+                    }
+                )
 
-    return Outcome("out_of_turns", "", budget.turns, spend, messages)
+        stop = check_budget(spend, budget)
+        if stop is not None:
+            return Outcome(stop, None, [], turns, spend, messages)
+        messages.append({"role": "user", "content": reply})
+
+    return Outcome("out_of_turns", None, [], budget.turns, spend, messages)
 
 
 async def ask(
@@ -181,7 +304,9 @@ def main() -> None:
     http_client = DefaultAsyncHttpxClient(verify=ssl.create_default_context())
     outcome = asyncio.run(ask(question, claude=AsyncAnthropic(http_client=http_client)))
     spend = outcome.spend
-    print(outcome.text)
+    if outcome.submission is not None:
+        print(outcome.submission.model_dump_json(indent=2))
+        print(f"sources: {outcome.sources}")
     print(f"\n{outcome.stop} after {outcome.turns} turns, ${spend.dollars:.4f}")
     print(
         f"tokens: {spend.input_tokens} in, {spend.output_tokens} out, "
