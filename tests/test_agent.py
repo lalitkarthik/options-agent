@@ -362,3 +362,20 @@ def test_the_instructions_state_the_marking_rule_and_forbid_conversions():
     assert "a wrong answer costs 3 points" in SYSTEM_PROMPT
     assert "more than 75% sure" in SYSTEM_PROMPT
     assert "never estimate, compute or convert" in SYSTEM_PROMPT
+    assert "never estimate, compute or convert" in SYSTEM_PROMPT
+
+
+async def test_a_submission_that_breaks_the_schema_is_rejected_then_fixed():
+    claude = fake_claude(
+        reply("tool_use", call("toolu_9", "submit_answer", status="answered", answer="One day.")),
+        submit(),
+    )
+    async with Client(build_server(FIXTURES), raise_exceptions=True) as mcp:
+        outcome = await run_agent("Which days?", claude=claude, mcp=mcp)
+
+    rejection = claude.messages.requests[1]["messages"][-1]["content"][0]
+    assert rejection["is_error"] is True
+    assert rejection["content"] == (
+        "Submission rejected: numbers: Field required. missing_data: Field required."
+    )
+    assert outcome.stop == "submitted"

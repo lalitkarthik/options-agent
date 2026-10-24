@@ -15,6 +15,7 @@ dependencies = [
 fetch-data = "options_agent.fetch:main"
 mcp-server = "options_agent.server:main"
 ask = "options_agent.agent:main"
+exam = "options_agent.exam:main"
 
 [dependency-groups]
 dev = [
