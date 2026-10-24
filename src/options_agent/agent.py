@@ -7,6 +7,7 @@ from typing import Any, Literal, get_args
 
 from anthropic import AsyncAnthropic, DefaultAsyncHttpxClient
 from mcp import Client, StdioServerParameters
+from pydantic import ValidationError
 
 from options_agent.grader import Submission
 from options_agent.server import Unit
@@ -176,6 +177,11 @@ def same_at_precision(submitted: float, returned: float) -> bool:
     return abs(returned - submitted) <= 0.5 * 10.0**-decimals + 1e-12
 
 
+def schema_problems(error: ValidationError) -> list[str]:
+    """Each place a submission breaks the submit_answer schema, one line each."""
+    return [f"{'.'.join(map(str, e['loc']))}: {e['msg']}." for e in error.errors()]
+
+
 def check_submission(submission: Submission, seen: dict[str, dict]) -> list[str]:
     """Every guardrail the submission fails; an empty list means it is accepted."""
     problems = []
@@ -228,6 +234,7 @@ async def run_agent(
     claude: AsyncAnthropic,
     mcp: Client,
     budget: Budget = DEFAULT_BUDGET,
+    model: str = MODEL,
 ) -> Outcome:
     """Question in, outcome out: loop until Claude submits an answer or the run must stop."""
     tools = [*await list_tools(mcp), SUBMIT_ANSWER]
@@ -239,7 +246,7 @@ async def run_agent(
 
     for turns in range(1, budget.turns + 1):
         response = await claude.messages.create(
-            model=MODEL,
+            model=model,
             max_tokens=16_000,
             output_config={"effort": "medium"},
             system=system,
@@ -265,8 +272,12 @@ async def run_agent(
             for call in calls:
                 if call.name != "submit_answer":
                     continue
-                submission = Submission.model_validate(call.input)
-                problems = check_submission(submission, seen)
+                try:
+                    submission = Submission.model_validate(call.input)
+                except ValidationError as error:
+                    problems = schema_problems(error)
+                else:
+                    problems = check_submission(submission, seen)
                 if not problems:
                     sources = sources_for(submission, seen)
                     return Outcome("submitted", submission, sources, turns, spend, messages)
